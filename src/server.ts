@@ -34,11 +34,13 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
     let image_url = req.query.image_url;
     const isValideUrl = String(image_url).match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
     if(!image_url||!isValideUrl) {
-      res.send("There is not photo url or check if it is a the format")
+      res.status(422).json({
+        message: 'Requires valid image url'
+   });
   }else{
     const imagePath = await filterImageFromURL(String(image_url))
+    res.status(200)
     res.sendFile(imagePath, function(){
-      console.log(imagePath)
       deleteLocalFiles([imagePath]);
     });
   }
@@ -46,7 +48,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   // Root Endpoint
   // Displays a simple message to the user
   app.get( "/", async ( req:express.Request, res:express.Response ) => {
-    console.log("hi1");
+    res.status(200)
     res.send("try GET /filteredimage?image_url={{}}")
   } );
   
